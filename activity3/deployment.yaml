@@ -12,10 +12,24 @@ spec:
         app: details-nodejs
     spec:
       containers:
-        - name: details-nodejs
-          image: rszypulka/bookinfo-details-v2:latest
-          ports:
-            - containerPort: 3000
-          env:
-          - name: LOG_LEVEL
-            value: "debug"
+      - name: details-nodejs
+        image: rszypulka/bookinfo-details-v2:2.0
+        ports:
+          - containerPort: 3000
+        env:
+        - name: LOG_LEVEL
+          value: "debug"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 3
+          periodSeconds: 3
+          failureThreshold: 2
+        readinessProbe:
+          exec:
+            command:
+            - cat
+            - /app/healthy
+          initialDelaySeconds: 5
+          periodSeconds: 5
